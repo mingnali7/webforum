@@ -23,15 +23,12 @@ app.set('view engine', 'html');
 app.set('views', __dirname);
 
 var client = new Client({
-  connectionString: process.env.postgresql - clean - 11886,
+  //database: 'webforum'
+  connectionString: process.env.HEROKU_POSTGRESQL_CLEAN_URL,
   ssl: true,
 });
 
 client.connect();
-
-app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname + "/index.html"))
-})
 
 app.get("/", function (req, res) {
   client.query("SELECT * FROM posts;", function (err, res) {
@@ -49,6 +46,12 @@ app.get("/", function (req, res) {
 })
 
 
+app.get("/", function (req, res) {
+  res.sendFile(path.join(__dirname + "/index.html"))
+})
+
+
+
 
 
 app.post("/post", function (req, res) {
@@ -60,19 +63,23 @@ app.post("/post", function (req, res) {
     console.log("succeed")
   })
 
-  client.query("SELECT * FROM posts;", function (err, res) {
-    if (err) {
-      console.log(err)
-    }
-    for (let row of res.rows) {
-      meow.push(JSON.parse((JSON.stringify(row))).message)
-    }
-    client.end()
-  })
+  // client.query("SELECT * FROM posts;", function (err, res) {
+  //   if (err) {
+  //     console.log(err)
+  //   }
+  //   for (let row of res.rows) {
+  //     meow.push(JSON.parse((JSON.stringify(row))).message)
+  //   }
+  //   client.end()
+  // })
   return res.sendfile(__dirname + '/index.html');
 })
 
 
-app.listen(process.env.PORT || 8000, function () {
+// app.listen(process.env.PORT || 8000, function () {
+//   console.log("listening on port 8000")
+// })
+
+app.listen(8000, function () {
   console.log("listening on port 8000")
 })
