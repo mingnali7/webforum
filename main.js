@@ -10,8 +10,8 @@ var bodyParser = require('body-parser')
 let meow = [];
 let newpost = "";
 
-const text = 'INSERT INTO posts (message) VALUES($1)'
-const values = ['4th row']
+// const text = 'INSERT INTO posts (message) VALUES($1)'
+// const values = ['4th row']
 
 let app = express();
 app.use(bodyParser.json()); // to support JSON-encoded bodies
@@ -29,16 +29,9 @@ var client = new Client({
 
 client.connect();
 
-
-
-
-
-
-
-
-
-
-
+app.get("/", function (req, res) {
+  res.sendFile(path.join(__dirname + "/index.html"))
+})
 
 app.get("/", function (req, res) {
   client.query("SELECT * FROM posts;", function (err, res) {
@@ -55,38 +48,18 @@ app.get("/", function (req, res) {
   })
 })
 
-app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname + "/index.html"))
-})
 
-// client.query("INSERT INTO posts (message) VALUES (" + newpost + ")", function (err, res) {
-//   if (err) {
-//     console.log(err)
-//   }
-//   for (let row of res.rows) {
 
-//     meow.push(JSON.parse((JSON.stringify(row))).message)
-//     //console.log(row)
-
-//   }
-//   client.end()
-// })
 
 app.post("/post", function (req, res) {
   newpost = req.body.secret
-  // res.send(newpost)
   client.query("INSERT INTO posts (message) VALUES ('" + req.body.secret + "');", function (err, res) {
     if (err) {
       console.log(err)
     }
     console.log("succeed")
-
-    //client.end()
   })
 
-
-
-  console.log(req.body.secret)
   client.query("SELECT * FROM posts;", function (err, res) {
     if (err) {
       console.log(err)
@@ -98,25 +71,6 @@ app.post("/post", function (req, res) {
   })
   return res.sendfile(__dirname + '/index.html');
 })
-
-app.post("/post", function (req, res) {
-
-})
-
-
-
-
-// app.post("/post", function (req, res) {
-
-//   console.log(meow)
-// })
-
-// app.get("/submit", function (req, res) {
-
-//   //res.send(req.query.secret)
-
-// })
-
 
 
 app.listen(process.env.PORT || 8000, function () {
