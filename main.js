@@ -23,7 +23,8 @@ app.set('view engine', 'html');
 app.set('views', __dirname);
 
 var client = new Client({
-  database: 'webforum'
+  connectionString: process.env.postgresql - clean - 11886,
+  ssl: true,
 });
 
 client.connect();
@@ -118,6 +119,6 @@ app.post("/post", function (req, res) {
 
 
 
-app.listen(8000, function () {
+app.listen(process.env.PORT || 8000, function () {
   console.log("listening on port 8000")
 })
