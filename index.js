@@ -24,7 +24,7 @@ app.set('views', __dirname);
 
 var client = new Client({
   //database: 'webforum'
-  connectionString: process.env.HEROKU_POSTGRESQL_CLEAN_URL,
+  connectionString: process.env.DATABASE_URL,
   ssl: true,
 });
 
@@ -80,6 +80,6 @@ app.post("/post", function (req, res) {
 //   console.log("listening on port 8000")
 // })
 
-app.listen(8000, function () {
+app.listen(process.env.PORT || 8000, function () {
   console.log("listening on port 8000")
 })
