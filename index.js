@@ -20,25 +20,26 @@ app.set('view engine', 'html');
 app.set('views', __dirname);
 
 var client = new Client({
-  database: 'webforum'
-  // connectionString: process.env.DATABASE_URL,
-  // ssl: true,
+  //database: 'webforum'
+  connectionString: process.env.DATABASE_URL,
+  ssl: true,
 });
 
 client.connect();
 
 app.get("/", function (req, res) {
-  client.query("SELECT * FROM posts;", function (err, res) {
+  client.query("SELECT * FROM posts;", function (err, res1) {
     if (err) {
       console.log(err)
     }
-    meow = res.rows;
-    console.log(res.rows)
+    meow = res1.rows;
+    console.log(meow)
     // client.end()
+    res.render('index', {
+      meow
+    })
   })
-  res.render('index', {
-    meow
-  })
+
 })
 
 app.post("/post", function (req, res) {
@@ -53,10 +54,6 @@ app.post("/post", function (req, res) {
 })
 
 
-// app.listen(process.env.PORT || 8000, function () {
-//   console.log("listening on port 8000")
-// })
-
-app.listen(8000, function () {
+app.listen(process.env.PORT || 8000, function () {
   console.log("listening on port 8000")
 })
