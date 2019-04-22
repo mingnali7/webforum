@@ -7,11 +7,8 @@ var mustacheExpress = require('mustache-express');
 let path = require("path");
 var bodyParser = require('body-parser')
 
-let meow = [];
+let meow;
 let newpost = "";
-
-// const text = 'INSERT INTO posts (message) VALUES($1)'
-// const values = ['4th row']
 
 let app = express();
 app.use(bodyParser.json()); // to support JSON-encoded bodies
@@ -23,9 +20,9 @@ app.set('view engine', 'html');
 app.set('views', __dirname);
 
 var client = new Client({
-  //database: 'webforum'
-  connectionString: process.env.DATABASE_URL,
-  ssl: true,
+  database: 'webforum'
+  // connectionString: process.env.DATABASE_URL,
+  // ssl: true,
 });
 
 client.connect();
@@ -35,44 +32,24 @@ app.get("/", function (req, res) {
     if (err) {
       console.log(err)
     }
-    for (let row of res.rows) {
-      meow.push(JSON.parse((JSON.stringify(row))).message)
-    }
+    meow = res.rows;
+    console.log(res.rows)
     // client.end()
   })
   res.render('index', {
-    meow: meow
+    meow
   })
 })
 
-
-app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname + "/index.html"))
-})
-
-
-
-
-
 app.post("/post", function (req, res) {
   newpost = req.body.secret
-  client.query("INSERT INTO posts (message) VALUES ('" + req.body.secret + "');", function (err, res) {
+  client.query('INSERT INTO posts (message) VALUES ($1)', [newpost], function (err, res) {
     if (err) {
       console.log(err)
     }
     console.log("succeed")
   })
-
-  // client.query("SELECT * FROM posts;", function (err, res) {
-  //   if (err) {
-  //     console.log(err)
-  //   }
-  //   for (let row of res.rows) {
-  //     meow.push(JSON.parse((JSON.stringify(row))).message)
-  //   }
-  //   client.end()
-  // })
-  return res.sendfile(__dirname + '/index.html');
+  return res.redirect('/');
 })
 
 
@@ -80,6 +57,6 @@ app.post("/post", function (req, res) {
 //   console.log("listening on port 8000")
 // })
 
-app.listen(process.env.PORT || 8000, function () {
+app.listen(8000, function () {
   console.log("listening on port 8000")
 })
